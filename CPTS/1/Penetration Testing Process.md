@@ -1,0 +1,126 @@
+### Background and Preparation
+- Penetration Testing Overview
+	- A pentest is an organized, targeted, and authorized attack attempt to test IT Infrastructure. This is done to determine their susceptibility to vulnerabilities.
+	- This is part of risk management for a company. They need to figure out if they are at risk, and how to reduce it.
+	- External pentest
+		- From outside the target network
+	- Internal pentest
+		- Inside the target network
+	- Types of pentesting
+		- Black box: Minimal. Only essential information given. IP addresses, domains, etc.
+		- Grey box: Extended. Additional information, such as specific URLs, hostnames, subnets, etc.
+		- White box: Maximum. Everything is disclosed to us. Internal view of the entire structure, allowing an attack using internal information. Details on configs, admin credentials, source code, etc.
+		- Red team: Combined with the above types, may include physical testing, social engineering, etc.
+		- Purple teaming: Combined with any of the above types, but working closely with defenders.
+	- Always:
+		- Obtain written consent from the owner or authorized representative of the computer/network being tested
+		- Conduct testing within the scope of the consent obtained only and respect any limitations specified
+		- Take measures to prevent causing damage to the systems or networks being tested
+		- Do not access, use, or disclose personal data or any other information obtained during the testing without permission
+		- Do not intercept electronic communications without the consent of one of the parties to the communication
+		- Do not conduct testing on systems or networks taht are covered by HIPAA without proper authorization
+
+### Pentesting stages
+- Pentesting Process
+	- Deterministic process: A process in which each state is causally dependent on and determined by other previous states and events.
+	- Stochastic process: A process in which one state follows from other states only with a certain probability.
+	- The pentesting process is a course of events connected with deterministic processes.
+	- Pre-engagement
+		- Educating the client and adjusting the contract. Creating an NDA, goals, scope, time estimation, rules of engagement, etc.
+	- Information gathering
+		- How we obtain information about necessary components. Search for information about the target company and the software/hardware in use to find potential security gaps taht we may be able to leverage for a foothold.
+	- Vulnerability assessment
+		- Analyze results from information gathering. Look for known vulnerabilities in the systems, applications, and various versions of each to discover possible attack vectors. Vulnerability assessment is the evaluation of potential vulnerabilities, both manually and through automated means.
+	- Exploitation
+		- Use results to test our attacks against the potential vectors and execute them against the target systems to gain initial access to those systems.
+	- Post-exploitation
+		- We have access to the exploited machine and ensure that we still have access to it even if modifications and changes are made. Attempt privilege escalation, hunt for sensitive data (pillaging), etc. 
+		- Sometimes perform post-exploitation to demonstrate to a client the impact of access. Other times, as an input to the lateral movement process.
+	- Lateral movement
+		- Movement within the internal network of our target to gain access to additional hosts at the same or higher privilege. If we're on a web server and find passwords in the registry, we can get to other servers or machines.
+	- Proof-of-concept
+		- Document step-by-step how we did things. Paint a picture of how we were able to chain multiple weaknesses to reach our goal so they can see a clear picture of how each vulnerability fits in and helps prioritize their remediation efforts. 
+		- If we don't document well, the client will suffer.
+	- Post-engagement 
+		- Detailed documentation is prepared, and we clean up all traces of our actions. Create deliverables for the client, hold a report walkthrough meeting, and sometimes deliver an executive presentation. Archive testing data per contractual obligations.
+- Information gathering is the cornerstone of a pentest. It includes:
+	- OSINT
+	- Infrastructure Enumeration
+	- Service Enumeration
+	- Host Enumeration
+	- Pillaging (after post-exploitation)
+- Vulnerability research and analysis as well as information gathering are descriptive analysis. Look at a bunch of CVEs and whatnot and assess possible attack vectors. There's a lot of back and forth movement between vulnerability research and information gathering. We will need to find PoC's for the things we find.
+- Exploitation is is where we modify the PoC's and whatnot to actually exploit the vulnerabilities that we've found. Closely connected to the previous stage, but distinct. You should prioritize attacks based on:
+	- Probability of success (high desired)
+	- Complexity (low desired)
+	- Probability of damage (low desired)
+	- **Use CVSS Scoring and the NVD Calculator**
+	- You sometimes need to prepare an attack using a local VM that mimics the environment you're attacking. This is frequently the case when there is no working/high quality PoC available.
+- Post-exploitation involves:
+	- Evasive testing
+		- If we get kicked off the network, the host gets quarantined, or the attack fails in any other way, we still want to make a detailed report on how they caught us. We want an entire attack chain as well.
+		- Testing can be:
+			- Evasive: find the things that they didn't catch us doing
+			- Non-evasive: don't do that
+			- Hybrid: mixture
+	- Information gathering
+		- We just loop back to this, getting deeper into the network
+	- Vulnerability assessment
+		- We go to this after information gathering, just like normal
+	- Pillaging
+		- Find all their stuff! Read all the configs, and understand the role of the system. We also search for sensitive data and anything that we can leverage.
+	- Privilege escalation
+		- We want to get to `root` or `SYSTEM`. 
+	- Persistence
+		- I wanna be able to stay on the system. We want to have flexibility and adapt to the circumstances. If I'm getting onto a server via a buffer overflow, it's better to not need to exploit every time I want to access. Frequently if you lose a connection, you can't get on the same way again.
+	- Data exfiltration
+		- Connected to pillaging, but we need to prove that we can actually get the data we find on the server onto our local machines. You need to check with the customer or your boss before exfiltrating data.
+- Lateral movement is moving from machine to machine within the network. We don't just want to successfully exploit a publicly available system, but also to get sensitive data or find all ways that an attacker could render the network unusable. Ransomware is a common way to do this. There's several phases to this:
+	- Pivoting
+		- We usually don't have attack tools on the exploited host. In this scenario we usually use it as a proxy server. This is sometimes called tunneling. 
+	- Evasive Testing
+		- This depends on the assessment scope. We need to know how to evade what the blue team has done to detect any of the stuff we attempt.
+	- Information Gathering
+		- We want to get an overview of which systems and how many can be reached from our own system.
+	- Vulnerability Assessment
+		- Far more errors occur inside a network than on exposed systems. The groups to which one has been assigned the rights to different system components plays an essential role.
+	- (Privilege) Exploitation
+		- Once we find and prioritize paths, we exploit them. Frequently we crack passwords/hashes and sometimes use existing credentials. Tools like Responder can be used to intercept NTLMv2 hashes. If we intercept a hash from an administrator, we can use the pass-the-hash technique to log in as that administrator (in most cases) on multiple hosts and servers.
+	- Post-Exploitation
+		- After getting into another system, we just iterate.
+
+### Project Closeout
+- Proof-of-concept is where we show the work we've done and create a plan for mitigation. We document the vulnerabilities found, create scripts that exploit them, and more. Admins often take a script and just make it so that specific method doesn't work, so it's important to discuss that with devs and admins. For example, if we leveraged a weak password, the solution isn't to fix that specific password, it's to implement a proper password policy.
+- Post-engagement is cleanup (don't leave anything broken or exploited) and reporting (write down everything you did). There's a meeting where you review the report. You typically make a report labeled "DRAFT", give it to the client, and then make a report labeled "FINAL" based on any feedback/comments. Pentesters aren't responsible for remediation.
+
+### Preparing for the Real-World
+- Practice makes perfect. A good workflow is:
+	- 2 modules
+	- 3 retired machines
+	- 5 active machines
+	- 1 pro lab/endgame
+- Modules
+	- Read the module
+	- Practice the exercises
+	- Complete the module
+	- Start the module exercises from scratch
+	- Take notes while solving
+	- Create technical documentation based on the notes
+	- Create non-technical documentation based on the notes
+- Retired machines (choose two easy, one medium)
+	- Get the user flag on your own
+	- Get the root flag on your own
+	- Write technical documentation
+	- Write non-technical documentation
+	- Compare notes with official writeups (or community writeups)
+	- Create a list of information you missed
+	- Watch Ippsec's walkthrough and compare it with your notes
+	- Expand notes and documentation by adding the missed parts
+- Active machines (two easy, two medium, one hard)
+	- Get the user flag
+	- Write technical documentation
+	- Write non-technical documentation
+	- Have it proofread by a technical and non-technical person
+- Pro Lab/Endgame
+	- These labs are multi-host environments that simulate enterprise networks. Write real documentation and do in-depth penetration tests on the systems.
+- Wrapping up
