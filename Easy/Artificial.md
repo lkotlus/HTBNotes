@@ -380,7 +380,7 @@ gael@artificial:~$
 - And that's how it's done. My winnings:
 ```a
 gael@artificial:~$ cat user.txt  
-d107664f29af16ab4563661aa595b7c5
+[NICE TRY]
 ```
 
 ## Lateral Movement (part 2: root)
@@ -761,7 +761,7 @@ bash: cannot set terminal process group (1538): Inappropriate ioctl for device
 bash: no job control in this shell  
 root@artificial:/# cat ~/root.txt  
 cat ~/root.txt  
-e1d79aa67d43c8b838f7cfe7a67c01a0
+[NICE TRY]
 ```
 - And there we have it! Be a good sport and run `/root/scripts/cleanup.sh` so that nobody accidentally cheats off your work.
 

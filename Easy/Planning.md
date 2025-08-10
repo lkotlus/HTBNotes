@@ -334,7 +334,7 @@ enzo@planning:~$
 - Firstly:
 ```a
 enzo@planning:~$ cat user.txt  
-f856ea56796cb30cb62b34d710906212
+[NICE TRY]
 ```
 - Very good. Let's just spam `linpeas`, because it looks like that's just what works for me.
 ### `linpeas` (again)
@@ -369,7 +369,7 @@ root
 ```a
 bash-5.2# cd /root  
 bash-5.2# cat root.txt  
-a69721897410e2d49f3fa66ccd864278
+[NICE TRY]
 ```
 
 ## Post-Machine Review
