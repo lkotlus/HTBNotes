@@ -2,7 +2,7 @@
 - My IP: `10.10.14.237` (given)
 - Target IP: `10.10.11.74` (given)
 - Target Domain: `artificial.htb` (given)
-- User credentials: `gael:mattp005numbertwo` (discovered)
+- User credentials: `gael:mattp006numbertwo` (discovered)
 - Root backrest credentials: `backrest_root:!@#$%^` (discovered)
 
 ## Enumeration

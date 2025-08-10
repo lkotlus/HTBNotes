@@ -134,5 +134,22 @@
 - Going against Nibbles. I shall attempt this box myself, and then compare my results to the walkthrough.
 - Apparently this isn't an option for me, I'd need to pay for premium. Scam.
 - I'll just do an active machine with an easy rating.
+- I ran through [[Artificial]], which was a great success! I can still take notes on Nibbles, though.
+- Scanning
+	- It can be useful to check for open ports first, and then do deeper port scanning afterwards. This is good for more sneaky testing.
+	- `nmap --script=http-enum` is great for web application information. We can also use `whatweb` for some similar information. More scans is always useful.
+	- It's worth noting that `whatweb` needs to be used for each page/directory you find!
+	- Tools like [CeWL](https://github.com/digininja/CeWL) can be used to create wordlists by crawling websites, which is pretty neat.
+- Foothold stuff
+	- We figure out that we have credentials on the page `admin:nibbles`
+	- A PHP reverse shell can be uploaded to the "My image" plugin
+	- A great python one-liner for a shell upgrade is `python -c 'import pty; pty.spawn("/bin/bash")'`
+	- Classic `sudo -l` to list out what you're able to do. Arbitrary script that you even have write access to, perfect.
 ### Problem Solving
+- Use the VPN like not an idiot
+- Ask questions properly
+- Answer questions properly
 ### What's Next?
+- Before moving to the next section, I am going to:
+	- Root another easy box
+	- Complete an easy challenge

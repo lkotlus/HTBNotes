@@ -6,3 +6,4 @@ Easy machines. Hopefully I don't get stuck here.
 [[Permx]]
 [[Chemistry]]
 [[Artificial]]
+[[Planning]]
